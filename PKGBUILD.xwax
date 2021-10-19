@@ -1,0 +1,33 @@
+# Maintainer: Kyriakos Bellios <kyr@designisdesign.eu>
+
+pkgname=xwax-git
+_name=xwax
+pkgver=1.8
+pkgrel=1
+pkgdesc='Open-source vinyl emulation software for Linux.'
+arch=('i686' 'x86_64')
+url='http://www.xwax.co.uk/'
+license=('GPL')
+depends=('alsa-lib' 'sdl_ttf' 'ttf-dejavu' 'terminus-font-ttf' 'mpg123' 'ffmpeg')
+optdepends=('cdparanoia: for CD import')
+source=("${pkgname}::git+https://github.com/MrKyr/xwax.git#branch=zeus")
+md5sums=('SKIP')
+conflicts=('xwax')
+provides=('xwax')
+
+pkgver() {
+  cd "${srcdir}/${pkgname}"
+  git describe | sed 's/^v//;s/-/./g;s/_/./g;'
+}
+
+build() {
+  cd "${srcdir}/${pkgname}"
+
+  ./configure --enable-alsa --prefix /usr
+  make EXECDIR="/usr/share/${_name}"
+}
+
+package() {
+  cd "${srcdir}/${pkgname}"
+  make DESTDIR="${pkgdir}" EXECDIR="/usr/share/${_name}" install
+}
